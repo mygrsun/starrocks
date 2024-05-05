@@ -209,6 +209,8 @@ public:
 
     static AggregateFunctionPtr MakePercentRankWindowFunction();
 
+    static AggregateFunctionPtr MakeAggWindowFunction();
+
     static AggregateFunctionPtr MakeNtileWindowFunction();
 
     template <LogicalType LT, bool ignoreNulls>

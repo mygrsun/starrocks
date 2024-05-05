@@ -99,6 +99,10 @@ AggregateFunctionPtr AggregateFactory::MakePercentRankWindowFunction() {
     return std::make_shared<PercentRankWindowFunction>();
 }
 
+AggregateFunctionPtr AggregateFactory::MakeAggWindowFunction() {
+    return std::make_shared<AggWindowFunction>();
+}
+
 AggregateFunctionPtr AggregateFactory::MakeNtileWindowFunction() {
     return std::make_shared<NtileWindowFunction>();
 }

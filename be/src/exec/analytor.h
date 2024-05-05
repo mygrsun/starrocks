@@ -234,7 +234,7 @@ private:
     // it's necessary to specify the size of the partition.
     void _set_partition_size_for_function();
     bool _require_partition_size(const std::string& function_name) {
-        return function_name == "cume_dist" || function_name == "percent_rank";
+        return function_name == "cume_dist" || function_name == "percent_rank" || function_name == "agg";
     }
 
     RuntimeState* _state = nullptr;

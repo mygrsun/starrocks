@@ -104,6 +104,7 @@ public class AnalyticExpr extends Expr {
     public static String ROWNUMBER = "ROW_NUMBER";
     public static String CUMEDIST = "CUME_DIST";
     public static String PERCENTRANK = "PERCENT_RANK";
+    public static String AGG = "AGG";
     public static String NTILE = "NTILE";
     public static String MIN = "MIN";
     public static String MAX = "MAX";
@@ -275,6 +276,14 @@ public class AnalyticExpr extends Expr {
         }
 
         return fn.functionName().equalsIgnoreCase(CUMEDIST) || fn.functionName().equalsIgnoreCase(PERCENTRANK);
+    }
+
+    public static boolean isAggFn(Function fn) {
+        if (!isAnalyticFn(fn)) {
+            return false;
+        }
+
+        return fn.functionName().equalsIgnoreCase(AGG);
     }
 
     public static boolean isRowNumberFn(Function fn) {

@@ -276,6 +276,7 @@ class CumeDistWindowFunction final : public WindowFunction<CumeDistState> {
                     size_t end) const override {
         DCHECK_GT(end, start);
         auto& s = this->data(state);
+        LOG(INFO) << "erictest" << 9999 << " ttt";
         auto* column = down_cast<DoubleColumn*>(dst);
         for (size_t i = start; i < end; ++i) {
             column->get_data()[i] = (double)s.rank / s.count;
@@ -329,6 +330,50 @@ class PercentRankWindowFunction final : public WindowFunction<PercentRankState> 
     }
 
     std::string get_name() const override { return "percent_rank"; }
+};
+
+
+struct AggState {
+    int64_t rank;
+    int64_t peer_group_start;
+    int64_t count;
+};
+
+class AggWindowFunction final : public WindowFunction<AggState> {
+    void reset(FunctionContext* ctx, const Columns& args, AggDataPtr __restrict state) const override {
+        auto& s = this->data(state);
+        s.rank = 0;
+        s.peer_group_start = -1;
+        s.count = 1;
+    }
+
+    void reset_state_for_contraction(FunctionContext* ctx, AggDataPtr __restrict state, size_t count) const override {
+        this->data(state).peer_group_start -= count;
+    }
+
+    void update_batch_single_state_with_frame(FunctionContext* ctx, AggDataPtr __restrict state, const Column** columns,
+                                              int64_t peer_group_start, int64_t peer_group_end, int64_t frame_start,
+                                              int64_t frame_end) const override {
+        auto& s = this->data(state);
+        if (s.peer_group_start != peer_group_start) {
+            s.peer_group_start = peer_group_start;
+            int64_t peer_group_count = peer_group_end - peer_group_start;
+            s.rank += peer_group_count;
+        }
+    }
+
+    void get_values(FunctionContext* ctx, ConstAggDataPtr __restrict state, Column* dst, size_t start,
+                    size_t end) const override {
+        DCHECK_GT(end, start);
+        auto& s = this->data(state);
+        LOG(INFO) << "erictest2t" << 9999 << " ttt";
+        auto* column = down_cast<DoubleColumn*>(dst);
+        for (size_t i = start; i < end; ++i) {
+            column->get_data()[i] = (double)s.rank / s.count;
+        }
+    }
+
+    std::string get_name() const override { return "agg"; }
 };
 
 // The NTILE window function divides ordered rows in the partition into `num_buckets` ranked groups

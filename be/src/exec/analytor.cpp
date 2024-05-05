@@ -174,9 +174,9 @@ Status Analytor::prepare(RuntimeState* state, ObjectPool* pool, RuntimeProfile* 
         if (fn.name.function_name == "count" || fn.name.function_name == "row_number" ||
             fn.name.function_name == "rank" || fn.name.function_name == "dense_rank" ||
             fn.name.function_name == "cume_dist" || fn.name.function_name == "percent_rank" ||
-            fn.name.function_name == "ntile") {
+            fn.name.function_name == "ntile" || fn.name.function_name == "agg") {
             auto return_type = TYPE_BIGINT;
-            if (fn.name.function_name == "cume_dist" || fn.name.function_name == "percent_rank") {
+            if (fn.name.function_name == "cume_dist" || fn.name.function_name == "percent_rank" || fn.name.function_name == "agg") {
                 return_type = TYPE_DOUBLE;
             }
             is_input_nullable = !fn.arg_types.empty() && (desc.nodes[0].has_nullable_child || has_outer_join_child);

@@ -111,6 +111,10 @@ public class WindowTransformer {
             Preconditions.checkState(windowFrame == null, "Unexpected window set for "
                     + callExpr.getFn().getFunctionName() + "()");
             windowFrame = AnalyticWindow.DEFAULT_WINDOW;
+        } else if (AnalyticExpr.isAggFn(callExpr.getFn())) {
+            Preconditions.checkState(windowFrame == null, "Unexpected window set for "
+                    + callExpr.getFn().getFunctionName() + "()");
+            windowFrame = AnalyticWindow.DEFAULT_WINDOW;
         } else if (AnalyticExpr.isOffsetFn(callExpr.getFn())) {
             try {
                 Preconditions.checkState(windowFrame == null);
