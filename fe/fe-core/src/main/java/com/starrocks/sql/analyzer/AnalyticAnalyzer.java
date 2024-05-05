@@ -133,7 +133,8 @@ public class AnalyticAnalyzer {
 
         if (analyticExpr.getWindow() != null) {
             if ((isRankingFn(analyticFunction.getFn()) || isCumeFn(analyticFunction.getFn()) ||
-                    isOffsetFn(analyticFunction.getFn()) || isHllAggFn(analyticFunction.getFn()))) {
+                    isOffsetFn(analyticFunction.getFn()) || isHllAggFn(analyticFunction.getFn()) ||
+                    isAggFn(analyticFunction.getFn()))) {
                 throw new SemanticException("Windowing clause not allowed with '" + analyticFunction.toSql() + "'",
                         analyticExpr.getPos());
             }
@@ -344,6 +345,14 @@ public class AnalyticAnalyzer {
 
         return fn.functionName().equalsIgnoreCase(AnalyticExpr.CUMEDIST)
                 || fn.functionName().equalsIgnoreCase(AnalyticExpr.PERCENTRANK);
+    }
+
+    private static boolean isAggFn(Function fn) {
+        if (!isAnalyticFn(fn)) {
+            return false;
+        }
+
+        return fn.functionName().equalsIgnoreCase(AnalyticExpr.AGG);
     }
 
     private static boolean isNtileFn(Function fn) {

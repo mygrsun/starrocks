@@ -431,6 +431,7 @@ public class FunctionSet {
     public static final String RANK = "rank";
     public static final String CUME_DIST = "cume_dist";
     public static final String PERCENT_RANK = "percent_rank";
+    public static final String AGG = "agg";
     public static final String NTILE = "ntile";
     public static final String ROW_NUMBER = "row_number";
     public static final String SESSION_NUMBER = "session_number";
@@ -646,6 +647,7 @@ public class FunctionSet {
             .add(FunctionSet.DENSE_RANK)
             .add(FunctionSet.RANK)
             .add(FunctionSet.CUME_DIST)
+            .add(FunctionSet.AGG)
             .add(FunctionSet.PERCENT_RANK)
             .add(FunctionSet.NTILE)
             .add(FunctionSet.ROW_NUMBER)
@@ -1148,6 +1150,9 @@ public class FunctionSet {
                 Collections.emptyList(), Type.DOUBLE, Type.VARBINARY));
         // Percent rank
         addBuiltin(AggregateFunction.createAnalyticBuiltin(PERCENT_RANK,
+                Collections.emptyList(), Type.DOUBLE, Type.VARBINARY));
+        //Agg
+        addBuiltin(AggregateFunction.createAnalyticBuiltin(AGG,
                 Collections.emptyList(), Type.DOUBLE, Type.VARBINARY));
         // Ntile
         addBuiltin(AggregateFunction.createAnalyticBuiltin(NTILE,

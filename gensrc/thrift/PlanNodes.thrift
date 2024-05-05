@@ -720,6 +720,7 @@ enum TAggregationOp {
   ANY_VALUE,
   NTILE,
   CUME_DIST,
+  AGG,
   PERCENT_RANK
 }
 

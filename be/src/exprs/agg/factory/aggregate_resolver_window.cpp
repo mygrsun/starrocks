@@ -62,6 +62,8 @@ void AggregateFuncResolver::register_window() {
                                                             AggregateFactory::MakeCumeDistWindowFunction());
     add_aggregate_mapping_notnull<TYPE_BIGINT, TYPE_DOUBLE>("percent_rank", true,
                                                             AggregateFactory::MakePercentRankWindowFunction());
+    add_aggregate_mapping_notnull<TYPE_BIGINT, TYPE_DOUBLE>("agg", true,
+                                                            AggregateFactory::MakeAggWindowFunction());
     add_aggregate_mapping_notnull<TYPE_BIGINT, TYPE_BIGINT>("row_number", true,
                                                             AggregateFactory::MakeRowNumberWindowFunction());
     add_aggregate_mapping_notnull<TYPE_BIGINT, TYPE_BIGINT>("ntile", true, AggregateFactory::MakeNtileWindowFunction());
