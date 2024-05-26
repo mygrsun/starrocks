@@ -18,6 +18,7 @@
 #include "column/vectorized_fwd.h"
 #include "exprs/agg/aggregate.h"
 #include "exprs/agg/aggregate_traits.h"
+#include "column/array_column.h"
 
 namespace starrocks {
 
@@ -332,44 +333,73 @@ class PercentRankWindowFunction final : public WindowFunction<PercentRankState> 
     std::string get_name() const override { return "percent_rank"; }
 };
 
-
 struct AggState {
-    int64_t rank;
-    int64_t peer_group_start;
-    int64_t count;
+    ColumnPtr data_column;
+    int64_t cur_positon;
 };
+
+
 
 class AggWindowFunction final : public WindowFunction<AggState> {
     void reset(FunctionContext* ctx, const Columns& args, AggDataPtr __restrict state) const override {
-        auto& s = this->data(state);
-        s.rank = 0;
-        s.peer_group_start = -1;
-        s.count = 1;
+       
+ LOG(INFO) << "erictest7t" << 9999 << " ttt";
+
+        auto& state_impl = this->data(state);
+ LOG(INFO) << "erictest7t1" << 9999 << " ttt";
+
+            state_impl.data_column = ctx->create_column(*ctx->get_arg_type(0), true);
+        
+        state_impl.data_column->resize(0);
+ LOG(INFO) << "erictest7t2" << 9999 << " ttt";
+
+        state_impl.cur_positon = 0;
+ LOG(INFO) << "erictest7t3" << 9999 << " ttt";
+
     }
 
     void reset_state_for_contraction(FunctionContext* ctx, AggDataPtr __restrict state, size_t count) const override {
-        this->data(state).peer_group_start -= count;
+        // this->data(state).peer_group_start -= count;
     }
 
     void update_batch_single_state_with_frame(FunctionContext* ctx, AggDataPtr __restrict state, const Column** columns,
                                               int64_t peer_group_start, int64_t peer_group_end, int64_t frame_start,
                                               int64_t frame_end) const override {
-        auto& s = this->data(state);
-        if (s.peer_group_start != peer_group_start) {
-            s.peer_group_start = peer_group_start;
-            int64_t peer_group_count = peer_group_end - peer_group_start;
-            s.rank += peer_group_count;
-        }
+      
+    LOG(INFO) << "erictest4t" << 9999 << " ttt";
+
+      
+     
+
+ LOG(INFO) << "erictest5t" << 9999 << " ttt";
+        auto* data_col = columns[0];
+ LOG(INFO) << "erictest5t1" << 9999 << " ttt";
+        
+        this->data(state).data_column->append(*data_col, this->data(state).cur_positon, 1);
+ LOG(INFO) << "erictest5t2" << 9999 << " ttt";
+ 
+        this->data(state).cur_positon++;
+
+ LOG(INFO) << "erictest6t" << 9999 << " ttt";
+
+
     }
 
     void get_values(FunctionContext* ctx, ConstAggDataPtr __restrict state, Column* dst, size_t start,
                     size_t end) const override {
         DCHECK_GT(end, start);
-        auto& s = this->data(state);
-        LOG(INFO) << "erictest2t" << 9999 << " ttt";
-        auto* column = down_cast<DoubleColumn*>(dst);
+        auto& state_impl = this->data(state);
+        LOG(INFO) << "erictest3t" << 9999 << " ttt";
+       
+auto array_col = down_cast<ArrayColumn*>(ColumnHelper::get_data_column(dst));
+
+       
+        auto elem_size = state_impl.data_column->size();
         for (size_t i = start; i < end; ++i) {
-            column->get_data()[i] = (double)s.rank / s.count;
+            LOG(INFO) << "erictest23start" << "i" << i << "start" << start << "end" << end;
+
+            array_col->elements_column()->append(*(state_impl.data_column), 0, elem_size);
+
         }
     }
 
